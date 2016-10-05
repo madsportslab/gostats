@@ -24,9 +24,9 @@ type Config struct {
 
 var config = Config{}
 
-var serverAddr = flag.String("server-addr", ":9999", "Server address")
-var databaseAddr = flag.String("database-addr", "./db/meta.db", "Database address")
-var redisAddr = flag.String("redis-addr", ":6379", "Redis address")
+var serverAddr = flag.String("server", ":9999", "Server address")
+var databaseAddr = flag.String("database", "./db/meta.db", "Database address")
+var redisAddr = flag.String("redis", ":6379", "Redis address")
 var domain = flag.String("domain", "127.0.0.1", "Domain address")
 var certFile = flag.String("cert", "ssl.crt", "SSL Certificate")
 var keyFile = flag.String("key", "ssl.key", "SSL Key")
@@ -76,7 +76,7 @@ func initRoutes() *mux.Router {
 
 	// leagues
 	router.HandleFunc("/api/leagues", leagueAPIHandler)
-	router.HandleFunc("/api/leagues/all", leagueAPIHandler)
+	router.HandleFunc("/api/leagues/{league:all}", leagueAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}", leagueAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/players",
 		playerAPIHandler)
@@ -86,6 +86,11 @@ func initRoutes() *mux.Router {
 		scheduleAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/standings",
 		standingsAPIHandler)
+	router.HandleFunc("/api/leagues/{league:[0-9]+}/followers",
+	  followerAPIHandler)
+	router.HandleFunc("/api/leagues/{league:[0-9]+}/followers/{follower:[0-9]+}",
+	  followerAPIHandler)
+	router.HandleFunc("/api/leagues/{league:following}", leagueAPIHandler)
 
 	// seasons
 	router.HandleFunc(

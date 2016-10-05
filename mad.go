@@ -78,6 +78,17 @@ type TeamAdmin struct {
 	UserEmail string `json:"userEmail"`
 }
 
+type Follower struct {
+	ID				string `json:"id"`
+	LeagueID	string `json:"leagueId"`
+	UserID    string `json:"userId"`
+}
+
+type Follow struct {
+	Followers []Follower	`json:"followers"`
+	IsAdmin   bool				`json:"isAdmin"`
+}
+
 type Season struct {
 	ID       string         `json:"id"`
 	Games    int            `json:"games"`

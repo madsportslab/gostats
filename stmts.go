@@ -36,8 +36,7 @@ const (
 		"WHERE canonical=?"
 
 	LeagueGetAll = "SELECT " +
-		"id, name, canonical, icon, visible, official, metric, " +
-		"city, country, location " +
+		"id, name, icon, location " +
 		"FROM leagues " +
 		"ORDER BY name ASC"
 
@@ -61,6 +60,11 @@ const (
 		"VALUES ($1, $2) "
 
 	LeagueAdminGet = "SELECT " +
+		"league_id, user_id " +
+		"FROM league_admins " +
+		"WHERE league_id=? and user_id=?"
+
+	LeagueAdminGetAll = "SELECT " +
 		"user_id " +
 		"FROM league_admins " +
 		"WHERE league_id=?"
@@ -246,6 +250,12 @@ const (
 		"WHERE league_admins.league_id=leagues.id and league_admins.user_id=? " +
 		"ORDER BY leagues.name ASC"
 
+	UserLeagueFollowGetAll = "SELECT " +
+		"leagues.id, leagues.name, leagues.canonical, leagues.icon " +
+		"FROM leagues, league_followers " +
+		"WHERE league_followers.league_id=leagues.id and league_followers.user_id=?" +
+		"ORDER BY leagues.name ASC"
+
 	UserLeagueGetLatest = "SELECT " +
 		"MAX(leagues.id), leagues.name, leagues.canonical, leagues.icon " +
 		"FROM leagues, league_admins " +
@@ -289,4 +299,23 @@ const (
 		"away_losses, last_ten_wins, last_ten_losses, streak_wins, streak_losses " +
 		"FROM standings " +
 		"WHERE league_id=? and season_id=?"
+
+  LeagueFollowerCreate = "INSERT INTO league_followers(" +
+		"league_id, user_id)" +
+		"VALUES($1, $2)"
+
+	LeagueFollowerGet = "SELECT " +
+	  "id, league_id, user_id " +
+	  "FROM league_followers " +
+		"WHERE league_id=? and user_id=?"
+
+	LeagueFollowerGetAll = "SELECT " +
+	  "id, league_id, user_id " +
+	  "FROM league_followers " +
+		"WHERE league_id=?"
+
+	LeagueFollowerDelete = "DELETE " +
+		"FROM league_followers " +
+		"WHERE league_id=? and user_id=?"
+
 )

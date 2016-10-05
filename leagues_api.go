@@ -10,6 +10,34 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func doesLeagueExist(leagueID string, leagues []League) bool {
+
+  for _, l := range leagues {
+
+		if leagueID == l.ID {
+			return true
+		}
+
+	}
+
+	return false
+
+} // doesLeagueExist
+
+func mergeLeagues(src []League, dest []League) []League {
+
+	for _, l := range src {
+
+	  if !doesLeagueExist(l.ID, dest) {
+			dest = append(dest, l)
+		}
+
+	}
+
+	return dest
+
+} // mergeLeagues
+
 func getDefaultLeague(user *User) *League {
 
 	if user.DefaultLeague == 0 {
@@ -76,7 +104,7 @@ func getAllLeagues() []League {
 
 		l := League{}
 
-		err := rows.Scan(&l.ID, &l.Name, &l.Canonical, &l.Icon)
+		err := rows.Scan(&l.ID, &l.Name, &l.Icon, &l.Location)
 
 		if err == sql.ErrNoRows || err != nil {
 			log.Println("getAllLeagues: ", err)
@@ -92,6 +120,40 @@ func getAllLeagues() []League {
 	return leagues
 
 } // getAllLeagues
+
+func getFollowedLeagues(user *User) []League {
+
+  rows, err := config.Database.Query(
+		UserLeagueFollowGetAll, user.ID,
+	)
+
+	if err != nil {
+		log.Println("getFollowedLeagues: ", err)
+		return nil
+	}
+
+	defer rows.Close()
+
+	leagues := []League{}
+
+	for rows.Next() {
+
+		l := League{}
+
+		err := rows.Scan(&l.ID, &l.Name, &l.Canonical, &l.Icon)
+
+		if err == sql.ErrNoRows || err != nil {
+			log.Println("getFollowedLeagues: ", err)
+			return nil
+		}
+
+		leagues = append(leagues, l)
+
+	}
+
+	return leagues
+
+} // getFollowedLeagues
 
 func getLeagues(user *User) []League {
 
@@ -179,14 +241,8 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 	league := vars["league"]
 
+	log.Println(league)
 	u := authenticate(r)
-
-	if u == nil {
-
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-
-	}
 
 	switch r.Method {
 	case http.MethodPost:
@@ -244,7 +300,7 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 			//l := getDefaultLeague(u)
 
 			leagues := getLeagues(u)
-
+						
 			if leagues == nil {
 				w.WriteHeader(http.StatusNotFound)
 				w.Write(createJSON("No leagues found for user."))
@@ -258,6 +314,18 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 			if league == "all" {
 
 				leagues := getAllLeagues()
+
+				if leagues == nil {
+					w.WriteHeader(http.StatusNotFound)
+					w.Write(createJSON("No leagues found."))
+				} else {
+					j, _ := json.Marshal(leagues)
+					w.Write(j)
+				}
+
+			} else if league == "following" {
+
+				leagues := getFollowedLeagues(u)
 
 				if leagues == nil {
 					w.WriteHeader(http.StatusNotFound)

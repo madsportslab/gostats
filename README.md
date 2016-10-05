@@ -35,7 +35,7 @@ Go backend RESTful API and websocket interface for madsportslab.
   * go get github.com/mattes/migrate 
 1.  go build (from $GOPATH/src/github.com/madsportslab/gostats)
 1.  migrate -url sqlite3://db/meta.db -path ./db/migrations up (from $GOPATH/src/github.com/madsportslab/gostats)
-1.  ./gostats -redis-addr=X.X.X.X:6379
+1.  ./gostats -redis=X.X.X.X:6379
 
 
 ## Description
