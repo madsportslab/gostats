@@ -1,0 +1,2 @@
+ALTER TABLE games DROP COLUMN hscore;
+ALTER TABLE games DROP COLUMN ascore;

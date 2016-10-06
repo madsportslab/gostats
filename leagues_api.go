@@ -241,7 +241,6 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 	league := vars["league"]
 
-	log.Println(league)
 	u := authenticate(r)
 
 	switch r.Method {
@@ -264,7 +263,6 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println(res)
 		// this code is suspect, if multiple requests come at
 		// the same time, you could
 		// get league_id of another league potentially
@@ -293,11 +291,17 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusConflict)
 		}
 
+		l := League{
+			ID: fmt.Sprintf("%d", league_id),
+		}
+
+		j, _ := json.Marshal(l)
+
+		w.Write(j)
+
 	case http.MethodGet:
 
 		if league == "" {
-
-			//l := getDefaultLeague(u)
 
 			leagues := getLeagues(u)
 						
@@ -337,12 +341,12 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 			} else {
 
-				leagues := getLeagues(u)
+				l := getLeague(league)
 
-				if len(leagues) == 0 {
+				if len(league) == 0 {
 					w.WriteHeader(http.StatusNotFound)
 				} else {
-					j, _ := json.Marshal(leagues)
+					j, _ := json.Marshal(l)
 					w.Write(j)
 				}
 

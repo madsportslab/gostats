@@ -149,7 +149,7 @@ func getStandings(req *Req) {
 
 func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
+  vars := mux.Vars(r)
 	league := vars["league"]
 	//season := vars["season"]
 

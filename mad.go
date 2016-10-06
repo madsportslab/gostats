@@ -51,6 +51,7 @@ type League struct {
 	Country   sql.NullString `json:"country"`
 	Location  sql.NullString `json:"location"`
 	URL       string         `json:"url"`
+	IsAdmin   bool           `json:"isAdmin"`
 }
 
 type Team struct {
@@ -108,6 +109,8 @@ type Game struct {
 	AwayName        string         `json:"awayName"`
 	Opponent        string         `json:"opponent"`
 	Completed       bool           `json:"completed"`
+	HomeScore       int         	 `json:"homeScore"`
+	AwayScore       int         	 `json:"awayScore"`
 	SeasonID        string         `json:"seasonID"`
 	LeagueID        string         `json:"leagueID"`
 	LeagueCanonical string         `json:"leagueCanonical"`

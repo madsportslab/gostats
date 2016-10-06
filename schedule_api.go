@@ -134,7 +134,7 @@ func getGamesBySeason(leagueid string, seasonid string, teamid string) []Game {
 		g := Game{}
 
 		err := rows.Scan(&g.ID, &g.HomeID, &g.AwayID, &g.LeagueID, &g.SeasonID,
-			&g.Opponent)
+			&g.Opponent, &g.HomeScore, &g.AwayScore)
 
 		if err == sql.ErrNoRows || err != nil {
 			log.Println("getGamesBySeason: ", err)
@@ -187,8 +187,7 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
 		league := vars["league"]
-		//season  := vars["season"]
-		// get latest season
+
 		home := r.FormValue("home")
 		away := r.FormValue("away")
 
@@ -217,10 +216,7 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		league := vars["league"]
 		team := vars["team"]
-		//scheduled   := r.FormValue("scheduled")
 
-		//log.Println(scheduled)
-		//season  := vars["season"]
 		game := vars["game"]
 
 		if game != "" {

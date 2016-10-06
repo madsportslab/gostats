@@ -92,6 +92,9 @@ func initRoutes() *mux.Router {
 	  followerAPIHandler)
 	router.HandleFunc("/api/leagues/{league:following}", leagueAPIHandler)
 
+	router.HandleFunc("/api/leagues/{league:[0-9]+}/admins",
+		leagueAdminHandler)
+
 	// seasons
 	router.HandleFunc(
 		"/api/leagues/{league:[0-9]+}/seasons/{season:[0-9]+}",
