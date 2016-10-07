@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -134,12 +135,27 @@ func getGamesBySeason(leagueid string, seasonid string, teamid string) []Game {
 		g := Game{}
 
 		err := rows.Scan(&g.ID, &g.HomeID, &g.AwayID, &g.LeagueID, &g.SeasonID,
-			&g.Opponent, &g.HomeScore, &g.AwayScore)
+			&g.Completed, &g.Opponent)
 
 		if err == sql.ErrNoRows || err != nil {
 			log.Println("getGamesBySeason: ", err)
 			return nil
 		}
+
+  req := Req{
+		LeagueId: g.LeagueID,
+		SeasonId: g.SeasonID,
+		GameId: g.ID,
+	}
+
+  score1 := getTeamScore(&req, g.HomeID)
+	score2 := getTeamScore(&req, g.AwayID)
+
+	log.Println(score1)
+	log.Println(score2)
+
+	g.HomeScore, _ = strconv.ParseInt(score1["T"], 0, 64) 
+	g.AwayScore, _ = strconv.ParseInt(score2["T"], 0, 64)
 
 		g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s&myteamid=%s",
 			g.LeagueID, g.SeasonID, g.ID, teamid)
@@ -169,6 +185,21 @@ func getGame(id string) *Game {
 		log.Println("getGame: ", err)
 		return nil
 	}
+
+  req := Req{
+		LeagueId: g.LeagueID,
+		SeasonId: g.SeasonID,
+		GameId: g.ID,
+	}
+
+  score1 := getTeamScore(&req, g.HomeID)
+	score2 := getTeamScore(&req, g.AwayID)
+
+	log.Println(score1)
+	log.Println(score2)
+
+	g.HomeScore, _ = strconv.ParseInt(score1["T"], 0, 64) 
+	g.AwayScore, _ = strconv.ParseInt(score2["T"], 0, 64)
 
 	g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s",
 		g.LeagueID, g.SeasonID, g.ID)
@@ -222,7 +253,7 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 		if game != "" {
 
 			g := getGame(game)
-
+			
 			if g == nil {
 				w.WriteHeader(http.StatusNotFound)
 				return
@@ -245,6 +276,8 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 				}
 
 				games := getGamesBySeason(league, s.ID, t.ID)
+
+				log.Println(games)
 
 				if len(games) == 0 {
 					w.WriteHeader(http.StatusNotFound)

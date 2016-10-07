@@ -109,8 +109,8 @@ type Game struct {
 	AwayName        string         `json:"awayName"`
 	Opponent        string         `json:"opponent"`
 	Completed       bool           `json:"completed"`
-	HomeScore       int         	 `json:"homeScore"`
-	AwayScore       int         	 `json:"awayScore"`
+	HomeScore       int64       	 `json:"homeScore"`
+	AwayScore       int64       	 `json:"awayScore"`
 	SeasonID        string         `json:"seasonID"`
 	LeagueID        string         `json:"leagueID"`
 	LeagueCanonical string         `json:"leagueCanonical"`

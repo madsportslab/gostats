@@ -640,6 +640,13 @@ func addTeamLoss(req *Req, teamid string) {
 
 func gameFinal(req *Req) {
 
+  // check for if game already completed
+	g := getGame(req.GameId)
+
+	if g.Completed {
+		return
+	}
+
 	initRecord(req, req.AwayId)
 	initRecord(req, req.HomeId)
 

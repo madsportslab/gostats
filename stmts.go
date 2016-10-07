@@ -99,7 +99,7 @@ const (
 
 	TeamScheduleGetAll = "SELECT " +
 		"games.id, games.home_id, games.away_id, games.league_id, games.season_id, " +
-		"teams.Name, games.hscore, games.ascore " +
+		"games.completed, teams.Name " +
 		"FROM games, teams " +
 		"WHERE games.league_id=? and games.season_id=? and " +
 		"(teams.id=games.home_id or teams.id=games.away_id) and " +
