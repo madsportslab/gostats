@@ -665,7 +665,53 @@ func gameFinal(req *Req) {
 
 	}
 
+  updateGamePlayed(req, req.HomeId)
+	updateGamePlayed(req, req.AwayId)
+
 } // gameFinal
+
+func updateGamePlayed(req *Req, teamid string) {
+
+	// based on whether or not a statistic was tracked
+	// in the future the seconds played will be tracked
+	// which will be much more reliable
+
+	players := getTeamPlayers(req.LeagueId, teamid)
+
+	s := Stat{
+		Play: "GP",
+	}
+	req.Data = &s
+
+	for _, p := range players {
+
+		key := fmt.Sprintf("player.%s.%s.%s.%s", req.LeagueId, req.SeasonId,
+			req.GameId, p.ID)
+
+		res, err := redis.StringMap(config.Redis.Do("HGETALL", key))
+
+		if err != nil {
+			log.Println("updateGamePlayed: ", err)
+		}
+		
+		for _, v := range res {
+
+			if v != "0" {
+
+				req.Data.PlayerId = p.ID
+
+				update(req)
+				break
+
+			}
+
+		}	
+
+	}
+
+	//update(req)
+
+} // updateGamePlayed
 
 func getTeamStats(req *Req, teamid string) [][]string {
 
