@@ -138,6 +138,27 @@ type Player struct {
 	URL          string         `json:"url"`
 }
 
+type Leaders struct {
+  LeagueID			string			`json:"leagueId"`
+	SeasonID      string			`json:"seasonId"`
+	Players       []PlayerAverage	`json:"players"`
+}
+
+type PlayerAverage struct {
+  TeamID				string			`json:"teamId"`
+	TeamName			string			`json:"teamName"`
+	PlayerID			string			`json:"playerId"`
+	PlayerName		string			`json:"playerName"`
+	Points       	float64     `json:"points"`
+	Rebounds      float64     `json:"rebounds"`
+	Assists       float64     `json:"assists"`
+	Steals       	float64     `json:"steals"`
+	Blocks       	float64     `json:"blocks"`
+	FTPct       	float64     `json:"ftPCT"`
+	FG2Pct       	float64     `json:"fg2PCT"`
+	FG3Pct       	float64     `json:"fg3PCT"`
+}
+
 type Score struct {
 	Away map[string]string `json:"away"`
 	Home map[string]string `json:"home"`

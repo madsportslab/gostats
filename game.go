@@ -85,6 +85,7 @@ type StatRes struct {
 
 type Stat struct {
 	PlayerId string `json:"playerId"`
+	PlayerNumber string `json:"playerNumber"`
 	TeamId   string `json:"teamId"`
 	Play     string `json:"play"`
 	Period   string `json:"period"`

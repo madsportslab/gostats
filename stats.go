@@ -196,8 +196,8 @@ func update(req *Req) []byte {
 
 	playerUpdate(req)
 	scoreUpdate(req)
-	seasonUpdate(req)
-	careerUpdate(req)
+	//seasonUpdate(req)
+	//careerUpdate(req)
 
 	j := getScore(req)
 
@@ -668,6 +668,9 @@ func gameFinal(req *Req) {
   updateGamePlayed(req, req.HomeId)
 	updateGamePlayed(req, req.AwayId)
 
+	updateLifetime(req, req.HomeId)
+	updateLifetime(req, req.AwayId)
+
 } // gameFinal
 
 func updateGamePlayed(req *Req, teamid string) {
@@ -747,6 +750,7 @@ func getTeamStats(req *Req, teamid string) [][]string {
 			res["BS"],
 			res["TO"],
 			res["PF"],
+			p.PlayerNumber.String,
 		}
 
 		gs = append(gs, stats)
@@ -776,4 +780,54 @@ func getGameStats(req *Req) []byte {
 
 	return j
 
-} // getGameStats
+} // getGameStats 
+
+func updateLifetime(req *Req, teamid string) {
+
+	l := getLeague(req.LeagueId)
+
+	players := getPlayers(l)
+
+  for _, p := range players {
+
+		playerKey := fmt.Sprintf("player.%s.%s.%s.%s", req.LeagueId, req.SeasonId,
+		  p.TeamID, p.ID)
+
+    seasonKey := fmt.Sprintf("season.player.%s.%s.%s", req.LeagueId, req.SeasonId,
+		  p.ID)
+    
+		careerKey := fmt.Sprintf("season.player.%s.%s.%s", req.LeagueId, req.SeasonId,
+		  p.ID)
+    
+		accumulate(playerKey, seasonKey)
+		accumulate(playerKey, careerKey)
+
+  }
+
+} // updateLifetime
+
+func accumulate(src string, dest string) {
+
+	res, err := redis.StringMap(config.Redis.Do("HGETALL", src))
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for play := range res {
+
+		log.Println(play)
+		//res, err := config.Redis.Do("HINCRBY", key, play, v)
+
+	}
+	//log.Println(res)
+
+	/*if err != nil {
+		log.Println(err)
+	}*/															
+
+	// add them up
+
+
+} // accumulate
