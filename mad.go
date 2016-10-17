@@ -149,16 +149,16 @@ type PlayerAverage struct {
 	TeamName			string			`json:"teamName"`
 	PlayerID			string			`json:"playerId"`
 	PlayerName		string			`json:"playerName"`
-	Points       	float64     `json:"points"`
-	Rebounds      float64     `json:"rebounds"`
-	Assists       float64     `json:"assists"`
-	Steals       	float64     `json:"steals"`
-	Blocks       	float64     `json:"blocks"`
-	Turnovers    	float64     `json:"turnovers"`
-	Fouls      	  float64     `json:"fouls"`
-	FTPct       	float64     `json:"ftPCT"`
-	FG2Pct       	float64     `json:"fg2PCT"`
-	FG3Pct       	float64     `json:"fg3PCT"`
+	Points       	string      `json:"points"`
+	Rebounds      string      `json:"rebounds"`
+	Assists       string      `json:"assists"`
+	Steals       	string      `json:"steals"`
+	Blocks       	string      `json:"blocks"`
+	Turnovers    	string      `json:"turnovers"`
+	Fouls      	  string      `json:"fouls"`
+	FTPct       	string      `json:"ftPCT"`
+	FG2Pct       	string      `json:"fg2PCT"`
+	FG3Pct       	string      `json:"fg3PCT"`
 }
 
 type Score struct {
