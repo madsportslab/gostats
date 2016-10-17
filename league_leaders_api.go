@@ -127,7 +127,7 @@ func calcPctAvg(attempt string, made string, gp string) float64 {
     return 0
 	}
 
-  if res3 != 0 {
+  if res3 != 0 && (res1+res2) != 0 {
     return float64(res2/(res1+res2))/float64(res3)
   } else {
     return 0
@@ -165,6 +165,8 @@ func getLeaders(req *Req) []PlayerAverage {
       Assists: calcStatAvg(res["AST"], res["GP"]),
       Steals: calcStatAvg(res["ST"], res["GP"]),
       Blocks: calcStatAvg(res["BS"], res["GP"]),
+      Turnovers: calcStatAvg(res["TO"], res["GP"]),
+      Fouls: calcStatAvg(res["PF"], res["GP"]),
       FTPct: calcPctAvg(res["1PTA"], res["1PTM"], res["GP"]),
       FG2Pct: calcPctAvg(res["2PTA"], res["2PTM"], res["GP"]),
       FG3Pct: calcPctAvg(res["3PTA"], res["3PTM"], res["GP"]),

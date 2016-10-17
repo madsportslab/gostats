@@ -284,7 +284,8 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 			broadcast <- gs
 
 		case FINAL:
-			gameFinal(&req)
+			//gameFinal(&req)
+			log.Println("no longer supported")
 
 		case STATS:
 

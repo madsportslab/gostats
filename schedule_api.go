@@ -210,14 +210,26 @@ func getGame(id string) *Game {
 
 } // getGame
 
+func endGame(league string, game string) {
+
+		_, err := config.Database.Exec(
+			ScheduleFinal, league, game,
+		)
+
+		if err != nil {
+			log.Println("endGame: ", err)
+		}
+
+} // endGame
+
 func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+  league := vars["league"]
 
 	switch r.Method {
 	case http.MethodPost:
-
-		vars := mux.Vars(r)
-
-		league := vars["league"]
 
 		home := r.FormValue("home")
 		away := r.FormValue("away")
@@ -243,9 +255,6 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 
 		// TODO: auth
-		vars := mux.Vars(r)
-
-		league := vars["league"]
 		team := vars["team"]
 
 		game := vars["game"]
@@ -314,22 +323,22 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		// TODO: auth
 
-		vars := mux.Vars(r)
-
-		league := vars["league"]
 		game := vars["game"]
 
-		_, err := config.Database.Exec(
-			ScheduleFinal, league, game,
-		)
+		g := getGame(game)
 
-		if err != nil {
-
-			log.Println("put scheduleAPIHandler: ", err)
-			w.WriteHeader(http.StatusConflict)
-			return
+		req := Req{
+			LeagueId: g.LeagueID,
+			SeasonId: g.SeasonID,
+			GameId: g.ID,
+			HomeId: g.HomeID,
+			AwayId: g.AwayID,
 
 		}
+
+    gameFinal(&req)
+
+		endGame(league, game)
 
 	case http.MethodDelete:
 	default:
