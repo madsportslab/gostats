@@ -161,6 +161,12 @@ type PlayerAverage struct {
 	FG3Pct       	string      `json:"fg3PCT"`
 }
 
+type PlayerStat struct {
+  Me        	*Player
+	Seasons     []PlayerAverage
+	Career      *PlayerAverage
+}
+
 type Score struct {
 	Away map[string]string `json:"away"`
 	Home map[string]string `json:"home"`

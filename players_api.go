@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 
+  "github.com/garyburd/redigo/redis"
 	"github.com/gorilla/mux"
+
 )
 
 func getTeamPlayers(leagueid string, teamid string) []Player {
@@ -81,7 +83,7 @@ func getPlayers(league *League) []Player {
 			return nil
 		}
 
-		p.URL = fmt.Sprintf("/leagues/%s/teams/%s/players/%s", league.Canonical, p.Canonical)
+		//p.URL = fmt.Sprintf("/leagues/%s/teams/%s/players/%s", league.Canonical, p.Canonical)
 
 		if p.First.String != "" {
 			p.ShortName = fmt.Sprintf("%c. %s", p.First.String[0], p.Last)
@@ -112,10 +114,11 @@ func getPlayer(id string) *Player {
 
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 
 	// TODO: get canonical league name
-	p.URL = fmt.Sprintf("/leagues/%s/teams/%s/players/%s", p.LeagueID, p.Canonical)
+	//p.URL = fmt.Sprintf("/leagues/%s/teams/%s/players/%s", p.LeagueID, p.Canonical)
 
 	if p.First.String != "" {
 		p.ShortName = fmt.Sprintf("%c. %s", p.First.String[0], p.Last)
@@ -144,8 +147,8 @@ func getPlayerByCanonical(league *League, team *Team, player string) *Player {
 		log.Println(err)
 	}
 
-	p.URL = fmt.Sprintf("/leagues/%s/teams/%s/player/%s",
-		league.Canonical, team.Canonical, p.Canonical)
+	//p.URL = fmt.Sprintf("/leagues/%s/teams/%s/player/%s",
+	//	league.Canonical, team.Canonical, p.Canonical)
 
 	if p.First.String != "" {
 		p.ShortName = fmt.Sprintf("%c. %s", p.First.String[0], p.Last)
@@ -175,6 +178,46 @@ func playerNumberExists(league string, team string, number string) bool {
 
 } // playerNumberExists
 
+func getStatsForPlayer(player *Player) []PlayerAverage {
+
+  seasons := getLeagueSeasons(player.LeagueID)
+
+	averages := []PlayerAverage{}
+
+	for _, s := range seasons {
+
+		log.Println("season id: ", s.ID)
+		key := fmt.Sprintf("season.player.%s.%s.%s", player.LeagueID,
+		  s.ID, player.ID)
+
+		res, err := redis.StringMap(config.Redis.Do("HGETALL", key))
+
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		average := PlayerAverage{
+			Points: calcPtsAvg(res["1PTM"], res["2PTM"], res["3PTM"], res["GP"]),
+			Rebounds: calcRebAvg(res["OREB"], res["DREB"], res["GP"]),
+			Assists: calcStatAvg(res["AST"], res["GP"]),
+			Steals: calcStatAvg(res["ST"], res["GP"]),
+			Blocks: calcStatAvg(res["BS"], res["GP"]),
+			Turnovers: calcStatAvg(res["TO"], res["GP"]),
+			Fouls: calcStatAvg(res["PF"], res["GP"]),
+			FTPct: calcPctAvg(res["1PTA"], res["1PTM"]),
+			FG2Pct: calcPctAvg(res["2PTA"], res["2PTM"]),
+			FG3Pct: calcPctAvg(res["3PTA"], res["3PTM"]),
+		}
+
+		averages = append(averages, average)
+
+	}
+
+	return averages
+
+} // getStatsForPlayer
+
 func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 	u := authenticate(r)
@@ -184,12 +227,13 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	vars := mux.Vars(r)
+
+	league := vars["league"]
+
 	switch r.Method {
 	case http.MethodPost:
 
-		vars := mux.Vars(r)
-
-		league := vars["league"]
 		team := vars["team"]
 
 		name := r.FormValue("name")
@@ -237,9 +281,6 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 
 		// TODO: auth
-		vars := mux.Vars(r)
-
-		league := vars["league"]
 		team := vars["team"]
 		player := vars["player"]
 
@@ -247,10 +288,17 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 			p := getPlayer(player)
 
+			s := getStatsForPlayer(p)
+
+			ps := PlayerStat{
+				Me: p,
+				Seasons: s,
+			}
+
 			if p == nil {
 				w.WriteHeader(http.StatusNotFound)
 			} else {
-				j, _ := json.Marshal(p)
+				j, _ := json.Marshal(ps)
 				w.Write(j)
 			}
 

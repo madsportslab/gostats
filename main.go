@@ -80,6 +80,8 @@ func initRoutes() *mux.Router {
 	router.HandleFunc("/api/leagues/{league:[0-9]+}", leagueAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/players",
 		playerAPIHandler)
+	router.HandleFunc("/api/leagues/{league:[0-9]+}/players/{player:[0-9]+}",
+		playerAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/games",
 		scheduleAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/games/{game:[0-9]+}",

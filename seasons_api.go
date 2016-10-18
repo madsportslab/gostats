@@ -1,12 +1,47 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
+
+func getLeagueSeasons(league string) []Season {
+
+  rows, err := config.Database.Query(
+		SeasonGetAll, league,
+	)
+
+  if err != nil {
+		log.Println("getLeagueSeasons: ", err)
+		return nil
+	}
+
+	defer rows.Close()
+
+	seasons := []Season{}
+
+	for rows.Next() {
+
+		s := Season{}
+
+		err := rows.Scan(&s.ID, &s.Periods, &s.Duration, &s.LeagueID)
+
+		if err == sql.ErrNoRows || err != nil {
+			log.Println("getLeagueSeasons: ", err)
+			return nil
+		}
+
+		seasons = append(seasons, s)
+
+	}
+
+  return seasons
+
+} // getLeagueSeasons
 
 func getLatestSeasonByID(league string) *Season {
 
