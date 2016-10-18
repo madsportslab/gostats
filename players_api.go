@@ -208,6 +208,7 @@ func getStatsForPlayer(player *Player) []PlayerAverage {
 			FTPct: calcPctAvg(res["1PTA"], res["1PTM"]),
 			FG2Pct: calcPctAvg(res["2PTA"], res["2PTM"]),
 			FG3Pct: calcPctAvg(res["3PTA"], res["3PTM"]),
+			GP: res["GP"],
 		}
 
 		averages = append(averages, average)

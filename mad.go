@@ -159,6 +159,7 @@ type PlayerAverage struct {
 	FTPct       	string      `json:"ftPCT"`
 	FG2Pct       	string      `json:"fg2PCT"`
 	FG3Pct       	string      `json:"fg3PCT"`
+	GP            string      `json:"gp"`
 }
 
 type PlayerStat struct {
