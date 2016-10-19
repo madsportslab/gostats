@@ -66,6 +66,8 @@ type Team struct {
 }
 
 type LeagueAdmin struct {
+	ID 			 string `json:"id"`
+	Email    string `json:"email"`
 	LeagueID string `json:"leagueId"`
 	UserID   string `json:"userId"`
 }

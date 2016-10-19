@@ -65,9 +65,9 @@ const (
 		"WHERE league_id=? and user_id=?"
 
 	LeagueAdminGetAll = "SELECT " +
-		"user_id " +
-		"FROM league_admins " +
-		"WHERE league_id=?"
+		"users.id, users.email, league_admins.league_id " +
+		"FROM league_admins, users " +
+		"WHERE league_id=? and league_admins.user_id=users.id"
 
 	LeagueAdminCheck = "SELECT " +
 		"user_id, league_id " +
