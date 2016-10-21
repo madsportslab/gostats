@@ -56,7 +56,6 @@ func followerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 	  // check if exist first
 
-		log.Println("post: ok")
 		_, err := config.Database.Exec(
 			LeagueFollowerGet, league, u.ID,
 		)
