@@ -52,6 +52,7 @@ type League struct {
 	Location  sql.NullString `json:"location"`
 	URL       string         `json:"url"`
 	IsAdmin   bool           `json:"isAdmin"`
+	IsFollower bool         `json:"isFollower"`
 }
 
 type Team struct {
@@ -90,6 +91,7 @@ type Follower struct {
 type Follow struct {
 	Followers []Follower	`json:"followers"`
 	IsAdmin   bool				`json:"isAdmin"`
+	IsFollower bool       `json:"isFollower"`
 }
 
 type Season struct {

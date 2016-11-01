@@ -43,6 +43,24 @@ func getLeagueFollowers(league string) []Follower {
 
 } // getLeagueFollowers
 
+func isFollower(user *User, leagueid string) bool {
+
+	row := config.Database.QueryRow(
+		LeagueFollowerGet, leagueid, user.ID)
+
+	f := Follower{}
+
+	err := row.Scan(&f.LeagueID, &f.UserID)
+
+	if err == sql.ErrNoRows {
+		log.Println("isFollower: ", err)
+		return false
+	} else {
+		return true
+	}
+
+} // isFollower
+
 func followerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
   u := authenticate(r)
@@ -82,15 +100,13 @@ func followerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
     followers := getLeagueFollowers(league)
 
-    var admin = false
+    admin 		:= isLeagueAdmin(u, league)
+		follower 	:= isFollower(u, league)
 
-    if isLeagueAdmin(u, league) {
-      admin = true
-    }
-    
     f := Follow{
       Followers: followers,
-      IsAdmin: admin, 
+      IsAdmin: admin,
+			IsFollower: follower,
     }
 
 		j, _ := json.Marshal(f)
