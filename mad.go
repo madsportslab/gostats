@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	MadSportsLab = "madsportslab"
+	Madsportslab = "madsportslab"
 )
 
 // Database table structures

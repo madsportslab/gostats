@@ -59,7 +59,7 @@ func userAPIHandler(w http.ResponseWriter, r *http.Request) {
       } else {
 
         cookie := http.Cookie{
-          Name: MadSportsLab,
+          Name: Madsportslab,
           Value: token,
           Domain: "127.0.0.1",
           Path: "/",

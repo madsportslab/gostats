@@ -14,7 +14,10 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		if u == nil {
 			w.WriteHeader(http.StatusUnauthorized)
+		} else {
+			w.WriteHeader(http.StatusOK)
 		}
+		
 
 	case http.MethodPut:
 
@@ -35,8 +38,6 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Println(err)
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("Invalid credentials"))
-				return
 			} else {
 
 				if u.Password == hashPassword(password, u.Salt, 32) {
@@ -54,7 +55,7 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 					}
 
 					cookie := http.Cookie{
-						Name:   MadSportsLab,
+						Name:   Madsportslab,
 						Value:  token,
 						Domain: *domain,
 						Path:   "/",
@@ -68,8 +69,6 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 				} else {
 					w.WriteHeader(http.StatusUnauthorized)
-					w.Write([]byte("Invalid credentials"))
-					return
 				}
 
 			}
@@ -79,7 +78,7 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 
 		cookie := http.Cookie{
-			Name:   MadSportsLab,
+			Name:   Madsportslab,
 			Value:  "",
 			Domain: *domain,
 			Path:   "/",
