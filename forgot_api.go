@@ -1,27 +1,74 @@
 package main
 
 import (
+  "database/sql"
   "fmt"
   "log"
 	"net/http"
   "os"
 
+  "github.com/gorilla/mux"
   "github.com/sendgrid/sendgrid-go"
   "github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-func generateLink() string {
+func addForgot(id string, token string) bool {
 
-  token := generateRandomHex(32)
+  row := config.Database.QueryRow(
+		ForgotGet, id)
 
-  return fmt.Sprintf("https://madsportslab.com/forgot?token=%s",
-    token)
+	f := Forgot{}
 
-} // generateLink
+	err := row.Scan(&f.ID, &f.UserID, &f.Token)
 
-func resetPasswordContent() string {
+	if err == sql.ErrNoRows {
+	
+    _, err2 := config.Database.Exec(
+      ForgotCreate, id, token)
+    
+    if err2 != nil {
+      log.Println("addForgot:Create: ", err2)
+      return false
+    } else {
+      return true
+    }
 
-  link := generateLink()
+  } else {
+
+    _, err3 := config.Database.Exec(
+      ForgotUpdate, token, id, token)
+    
+    if err3 != nil {
+      log.Println("addForgot:Update: ", err3)
+      return false
+    } else {
+      return true
+    }
+
+  }
+  
+} // addForgot
+
+func getForgot(token string) *Forgot {
+
+  row := config.Database.QueryRow(
+		ForgotExists, token)
+
+	f := Forgot{}
+
+	err := row.Scan(&f.ID, &f.UserID, &f.Token)
+
+	if err == sql.ErrNoRows {
+    return nil
+  } else {
+    return &f
+  }
+  
+} // getForgot
+
+func resetPasswordContent(token string) string {
+
+  link := fmt.Sprintf("https://madsportslab.com/forgot?token=%s", token)
 
   return fmt.Sprintf("Dear user,<br><br>You have requested to reset your password " +
     "for madsportslab.com, if you did not initiate this request then " +
@@ -77,18 +124,73 @@ func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
 
     email := r.FormValue("email")
 
-    if email == "" {
+    log.Println(email)
+
+    u := getUserByEmail(email)
+
+    if u == nil {
       w.WriteHeader(http.StatusConflict)
       return
     }
 
-    content := resetPasswordContent()
+    token := generateToken(32)
+
+    content  := resetPasswordContent(token)
+
+    log.Println(token)
 
     sendEmail(email, content)
+
+    if !addForgot(u.ID, token) {
+      w.WriteHeader(http.StatusConflict)
+    }
 
   case http.MethodPost:
 	case http.MethodDelete:
 	case http.MethodPut:
+
+    vars := mux.Vars(r)
+
+	  token := vars["token"]
+
+    log.Println(token)
+
+    f := getForgot(token)
+
+    u := getUser(f.UserID)
+
+    if u == nil {
+      w.WriteHeader(http.StatusForbidden)
+    } else {
+      
+      password  := r.FormValue("password")
+
+      if password == "" {
+        w.WriteHeader(http.StatusConflict)
+      } else {
+
+        hash  := hashPassword(password, u.Salt, 32)
+
+        if updatePassword(u, hash) {
+
+          _, err := config.Database.Exec(
+            ForgotDelete, u.ID, token,
+          )
+
+          if err != nil {
+            log.Println("PutForgotAPI:ForgotDelete:", err)
+            w.WriteHeader(http.StatusConflict)
+          }
+
+        } else {
+          w.WriteHeader(http.StatusConflict)
+        }
+        
+      }  
+
+    }
+	
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 

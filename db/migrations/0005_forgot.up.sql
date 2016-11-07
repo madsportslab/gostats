@@ -1,0 +1,8 @@
+create table if not exists forgot(
+  id INTEGER NOT NULL PRIMARY KEY,
+  user_id INTEGER NOT NULL UNIQUE,
+  token VARCHAR,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  modified DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);

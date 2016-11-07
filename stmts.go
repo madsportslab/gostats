@@ -208,7 +208,7 @@ const (
 		"VALUES ($1, $2, $3, $4, $5, $6, $7)"
 
 	UserGet = "SELECT " +
-		"id, name, email, icon " +
+		"id, name, email, icon, salt " +
 		"FROM users " +
 		"WHERE id=?"
 
@@ -317,5 +317,31 @@ const (
 	LeagueFollowerDelete = "DELETE " +
 		"FROM league_followers " +
 		"WHERE league_id=? and user_id=?"
+
+	ForgotCreate = "INSERT INTO forgot(" +
+	  "user_id, token) " +
+		"VALUES($1, $2)"
+
+	ForgotGet = "SELECT " +
+	  "id, user_id, token " +
+		"FROM forgot " +
+		"WHERE user_id=?"
+
+	ForgotDelete = "DELETE " +
+	  "FROM forgot " +
+		"WHERE user_id=? and token=?"
+
+	ForgotUpdate = "UPDATE forgot " +
+	  "SET token=? " +
+		"WHERE user_id=? and token=?"
+
+	ForgotExists = "SELECT " +
+	  "id, user_id, token " +
+		"FROM forgot " +
+		"WHERE token=?"
+
+	UserUpdatePassword = "UPDATE users " +
+	  "SET password=? " +
+		"WHERE id=?"
 
 )

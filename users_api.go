@@ -8,6 +8,20 @@ import (
   "github.com/gorilla/mux"
 )
 
+func updatePassword(u *User, hash string) bool {
+
+  _, err := config.Database.Exec(
+    UserUpdatePassword, hash, u.ID, 
+  )
+
+  if err != nil {
+    log.Println("updatePassword: ", err)
+    return false
+  } else {
+    return true
+  }
+
+} // updatePassword
 
 func getUserByEmail(email string) *User {
   
@@ -28,6 +42,25 @@ func getUserByEmail(email string) *User {
   
 } // getUserByEmail
 
+
+func getUser(id string) *User {
+  
+  row := config.Database.QueryRow(
+    UserGet, id,
+  )
+
+  u := User{}
+  
+  err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Icon, &u.Salt)
+  
+  if err != nil {
+    log.Println(err)
+    return nil
+  }
+  
+  return &u
+  
+} // getUser
 
 func userAPIHandler(w http.ResponseWriter, r *http.Request) {
   
@@ -86,7 +119,7 @@ func userAPIHandler(w http.ResponseWriter, r *http.Request) {
   
     u := User{}
     
-    err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Icon)
+    err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Icon, &u.Salt)
     
     if err != nil {
       log.Println(err)
@@ -101,13 +134,11 @@ func userAPIHandler(w http.ResponseWriter, r *http.Request) {
     u := authenticate(r)
     
     if u == nil {
-      log.Println(u)
       w.WriteHeader(http.StatusUnauthorized)
-      w.Write([]byte("Must login as user."))
       return
     }    
     
-    leagueid      := r.FormValue("leagueid")
+    leagueid := r.FormValue("leagueid")
     
     _, err2 := config.Database.Exec(
       UserUpdateDefaultLeague, leagueid, u.ID,

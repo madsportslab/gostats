@@ -14,8 +14,6 @@ func authAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		if u == nil {
 			w.WriteHeader(http.StatusUnauthorized)
-		} else {
-			w.WriteHeader(http.StatusOK)
 		}
 		
 

@@ -177,6 +177,12 @@ type Score struct {
 	Home map[string]string `json:"home"`
 }
 
+type Forgot struct {
+	ID				string
+  UserID		string
+	Token			string
+}
+
 type JSONResponse struct {
 	Msg string `json:"msg"`
 }
