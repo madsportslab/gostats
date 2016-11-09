@@ -75,8 +75,8 @@ func initRoutes() *mux.Router {
 	router.HandleFunc("/auth", authAPIHandler)
 
 	router.HandleFunc("/api/forgot", forgotAPIHandler)
-	router.HandleFunc("/api/forgot/{token:[0-9a-f]+}",
-	  forgotAPIHandler)
+	//router.HandleFunc("/api/forgot",
+	  //forgotAPIHandler)
 
 	// leagues
 	router.HandleFunc("/api/leagues", leagueAPIHandler)

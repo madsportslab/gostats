@@ -7,7 +7,6 @@ import (
 	"net/http"
   "os"
 
-  "github.com/gorilla/mux"
   "github.com/sendgrid/sendgrid-go"
   "github.com/sendgrid/sendgrid-go/helpers/mail"
 )
@@ -149,9 +148,7 @@ func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 	case http.MethodPut:
 
-    vars := mux.Vars(r)
-
-	  token := vars["token"]
+	  token := r.FormValue("token")
 
     log.Println(token)
 
