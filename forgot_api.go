@@ -116,6 +116,7 @@ func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 
+    log.Println(u)
     if u != nil {
       w.WriteHeader(http.StatusForbidden)
       return
@@ -153,6 +154,11 @@ func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
     log.Println(token)
 
     f := getForgot(token)
+
+    if f == nil {
+      w.WriteHeaeder(http.StatusForbidden)
+      return 
+    }
 
     u := getUser(f.UserID)
 

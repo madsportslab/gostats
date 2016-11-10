@@ -114,8 +114,6 @@ func authenticate(r *http.Request) *User {
 
 	if err != nil {
 
-		//log.Println("authenticate: ", err)
-
 		token = r.FormValue("token")
 
 		if token == "" {
