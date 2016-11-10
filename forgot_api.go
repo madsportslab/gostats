@@ -157,7 +157,7 @@ func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
     f := getForgot(token)
 
     if f == nil {
-      w.WriteHeaeder(http.StatusForbidden)
+      w.WriteHeader(http.StatusForbidden)
       return 
     }
 
