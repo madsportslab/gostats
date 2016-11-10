@@ -34,8 +34,10 @@ func addForgot(id string, token string) bool {
 
   } else {
 
+    newToken := generateToken(32)
+
     _, err3 := config.Database.Exec(
-      ForgotUpdate, token, id, token)
+      ForgotUpdate, newToken, id, token)
     
     if err3 != nil {
       log.Println("addForgot:Update: ", err3)
@@ -71,7 +73,7 @@ func resetPasswordContent(token string) string {
 
   return fmt.Sprintf("Dear user,<br><br>You have requested to reset your password " +
     "for madsportslab.com, if you did not initiate this request then " +
-    "we suggest that you forward this email to support@madsportslab.com.  " +
+    "please ignore this email.  " +
     "<br><br>Click the link below to reset your password: " +
     "<br><br><a href=\"%s\">%s</a><br><br>Sincerely,<br>Team madsportslab" +
     "<br><br><a href=\"https://madsportslab.com\">https://madsportslab.com</a>",
@@ -111,16 +113,15 @@ func sendEmail(email string, text string) {
 
 func forgotAPIHandler(w http.ResponseWriter, r *http.Request) {
 
-  u := authenticate(r)
+  //u := authenticate(r)
 
 	switch r.Method {
 	case http.MethodGet:
 
-    log.Println(u)
-    if u != nil {
-      w.WriteHeader(http.StatusForbidden)
-      return
-    }
+    //if u != nil {
+    //  w.WriteHeader(http.StatusForbidden)
+    //  return
+    //}
 
     email := r.FormValue("email")
 
