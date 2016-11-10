@@ -333,7 +333,7 @@ const (
 
 	ForgotUpdate = "UPDATE forgot " +
 	  "SET token=? " +
-		"WHERE user_id=? and token=?"
+		"WHERE user_id=?"
 
 	ForgotExists = "SELECT " +
 	  "id, user_id, token " +

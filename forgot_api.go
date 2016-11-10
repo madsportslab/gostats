@@ -34,10 +34,8 @@ func addForgot(id string, token string) bool {
 
   } else {
 
-    newToken := generateToken(32)
-
     _, err3 := config.Database.Exec(
-      ForgotUpdate, newToken, id, token)
+      ForgotUpdate, token, id)
     
     if err3 != nil {
       log.Println("addForgot:Update: ", err3)
