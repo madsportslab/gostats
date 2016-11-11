@@ -197,9 +197,8 @@ const (
 		"WHERE players.team_id=teams.id and players.league_id=? " +
 		"ORDER BY players.last ASC"
 
-	PlayerUpdate = "UPDATE players(" +
-		"first, middle, last, position_id, playerNumber, league_id, team_id) " +
-		"VALUES ($1, $2, $3, $4, $5, $6, $7) " +
+	PlayerUpdate = "UPDATE players " +
+		"set first=?, middle=?, last=?, position_id=?, playerNumber=? " +
 		"WHERE id=?"
 
 	PlayerCreate = "INSERT INTO players(" +
@@ -254,6 +253,13 @@ const (
 		"leagues.id, leagues.name, leagues.canonical, leagues.icon " +
 		"FROM leagues, league_followers " +
 		"WHERE league_followers.league_id=leagues.id and league_followers.user_id=?" +
+		"ORDER BY leagues.name ASC"
+
+	UserAllLeagueGetAll = "SELECT " +
+		"leagues.id, leagues.name, leagues.canonical, leagues.icon " +
+		"FROM leagues, league_followers, league_admins " +
+		"WHERE league_followers.league_id=leagues.id and league_followers.user_id=? " +
+		"or league_admins.league_id=leagues.id and league_admins.user_id=?" +
 		"ORDER BY leagues.name ASC"
 
 	UserLeagueGetLatest = "SELECT " +

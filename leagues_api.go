@@ -58,8 +58,6 @@ func getDefaultLeague(user *User) *League {
 		return nil
 	}
 
-	l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
-
 	return &l
 
 } // getDefaultLeague
@@ -78,9 +76,7 @@ func getLatestLeague(user *User) *League {
 		log.Println(err)
 		return nil
 	}
-
-	l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
-
+ 
 	return &l
 
 } // getLatestLeague
@@ -110,8 +106,6 @@ func getAllLeagues() []League {
 			log.Println("getAllLeagues: ", err)
 			return nil
 		}
-
-		l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
 
 		leagues = append(leagues, l)
 
@@ -181,8 +175,6 @@ func getLeagues(user *User) []League {
 			return nil
 		}
 
-		l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
-
 		leagues = append(leagues, l)
 
 	}
@@ -190,6 +182,40 @@ func getLeagues(user *User) []League {
 	return leagues
 
 } // getLeagues
+
+func getAllMyLeagues(user *User) []League {
+
+	rows, err := config.Database.Query(
+		UserAllLeagueGetAll, user.ID, user.ID,
+	)
+
+	if err != nil {
+		log.Println("getAllMyLeagues: ", err)
+		return nil
+	}
+
+	defer rows.Close()
+
+	leagues := []League{}
+
+	for rows.Next() {
+
+		l := League{}
+
+		err := rows.Scan(&l.ID, &l.Name, &l.Canonical, &l.Icon)
+
+		if err == sql.ErrNoRows || err != nil {
+			log.Println("getAllMyLeagues: ", err)
+			return nil
+		}
+
+		leagues = append(leagues, l)
+
+	}
+
+	return leagues
+
+} // getAllMyLeagues
 
 func getLeague(league string) *League {
 

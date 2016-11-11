@@ -343,26 +343,28 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
 
-		league := vars["league"]
-		team := vars["team"]
+		//team := vars["team"]
 		player := vars["player"]
 
 		last, first, middle := parseName(r.FormValue("name"))
 
-		height := r.FormValue("height")
+		position := r.FormValue("position")
+		number := r.FormValue("number")
+
+		/*height := r.FormValue("height")
 		weight := r.FormValue("weight")
 		hand := r.FormValue("hand")
 		position := r.FormValue("position")
 		jersey := r.FormValue("jersey")
 		birth := r.FormValue("birth")
-
+		*/
 		_, err := config.Database.Exec(
-			PlayerUpdate, first, middle, last, height, weight, hand, position,
-			jersey, birth, league, team, player,
+			PlayerUpdate, first, middle, last, position, number, player,
 		)
 
 		if err != nil {
 			log.Println(err)
+			w.WriteHeader(http.StatusConflict)
 		}
 
 	case http.MethodDelete:

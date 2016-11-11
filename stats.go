@@ -459,7 +459,7 @@ func getGameScores(leagueid string) map[string]GameScore {
 
 func getMyScores(user *User) []byte {
 
-	leagues := getLeagues(user)
+	leagues := getAllMyLeagues(user)
 
 	log.Println(leagues)
 

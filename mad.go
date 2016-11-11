@@ -134,9 +134,9 @@ type Player struct {
 	Weight       float32        `json:"weight"`
 	Hand         int            `json:"hand"`
 	Birth        sql.NullString `json:"birth"`
-	PositionID   string         `json:"positionID"`
-	LeagueID     string         `json:"leagueID"`
-	TeamID       string         `json:"teamID"`
+	PositionID   string         `json:"positionId"`
+	LeagueID     string         `json:"leagueId"`
+	TeamID       string         `json:"teamId"`
 	TeamName     string         `json:"teamName"`
 	PlayerNumber sql.NullString `json:"playerNumber"`
 	URL          string         `json:"url"`
