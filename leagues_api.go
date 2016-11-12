@@ -382,24 +382,16 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPut:
 
+		name := r.FormValue("name")
+
 		// authorization
-
-		seasonid := r.FormValue("seasonid")
-		duration := r.FormValue("duration")
-		periods := r.FormValue("periods")
-
-		if periods != "2" || periods != "4" {
-			w.WriteHeader(http.StatusBadRequest)
-		}
-
-		res, err := config.Database.Exec(
-			SeasonUpdate, periods, duration, seasonid,
+		_, err := config.Database.Exec(
+			LeagueUpdate, name, league,
 		)
 
-		log.Println(res)
 		if err != nil {
 			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusConflict)
 		}
 
 	case http.MethodDelete:

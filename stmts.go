@@ -51,8 +51,8 @@ const (
 		"VALUES ($1, $2, $3)"
 
 	LeagueUpdate = "UPDATE " +
-		"leagues(name, icon, sport_id) " +
-		"VALUES ($1, $2, $3) " +
+		"leagues " +
+		"SET name=? " +
 		"WHERE id=?"
 
 	LeagueAdminCreate = "INSERT INTO league_admins(" +
