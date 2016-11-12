@@ -140,9 +140,9 @@ const (
 		"VALUES ($1, $2, $3, $4)"
 
 	TeamUpdate = "UPDATE " +
-		"teams(name, icon, league_id) " +
-		"VALUES ($1, $2, $3) " +
-		"WHERE id=?"
+		"teams " +
+		"SET name=? " +
+		"WHERE league_id=? and id=?"
 
 	TeamPlayerGet = "SELECT " +
 		"id, first, middle, last, canonical, playerNumber, " +

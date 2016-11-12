@@ -270,18 +270,18 @@ func teamAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
 
-		//league  := vars["league"]
+		league  := vars["league"]
 		team := vars["team"]
 
 		name := r.FormValue("name")
-		icon := r.FormValue("icon")
 
 		_, err := config.Database.Exec(
-			TeamUpdate, name, icon, team,
+			TeamUpdate, name, league, team,
 		)
 
 		if err != nil {
 			log.Println(err)
+			w.WriteHeader(http.StatusConflict)
 		}
 
 	case http.MethodDelete:
