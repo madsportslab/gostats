@@ -80,7 +80,7 @@ func followerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 
-			log.Println("post: err is nil")
+			log.Println("follower Add: err is nil")
 			_, err2 := config.Database.Exec(
 				LeagueFollowerCreate, league, u.ID,
 			)
