@@ -60,7 +60,7 @@ type Team struct {
 	Name            string         `json:"name"`
 	Canonical       string         `json:"canonical"`
 	Icon            sql.NullString `json:"icon"`
-	LeagueID        string         `json:"leagueID"`
+	LeagueID        string         `json:"leagueId"`
 	LeagueCanonical string         `json:"leagueCanonical"`
 	LeagueName      string         `json:"leagueName"`
 	URL             string         `json:"url"`
@@ -78,7 +78,7 @@ type TeamAdmin struct {
 	LeagueID  string `json:"leagueId"`
 	TeamID    string `json:"teamId"`
 	TeamName  string `json:"teamName"`
-	UserID    string `json:"userID"`
+	UserID    string `json:"userId"`
 	UserEmail string `json:"userEmail"`
 }
 
@@ -101,22 +101,22 @@ type Season struct {
 	Duration int            `json:"duration"`
 	Start    sql.NullString `json:"start"`
 	Finish   sql.NullString `json:"finish"`
-	LeagueID string         `json:"leagueID"`
+	LeagueID string         `json:"leagueId"`
 }
 
 type Game struct {
 	ID              string         `json:"id"`
 	Scheduled       sql.NullString `json:"scheduled"`
-	HomeID          string         `json:"homeID"`
-	AwayID          string         `json:"awayID"`
+	HomeID          string         `json:"homeId"`
+	AwayID          string         `json:"awayId"`
 	HomeName        string         `json:"homeName"`
 	AwayName        string         `json:"awayName"`
 	Opponent        string         `json:"opponent"`
 	Completed       bool           `json:"completed"`
 	HomeScore       int64       	 `json:"homeScore"`
 	AwayScore       int64       	 `json:"awayScore"`
-	SeasonID        string         `json:"seasonID"`
-	LeagueID        string         `json:"leagueID"`
+	SeasonID        string         `json:"seasonId"`
+	LeagueID        string         `json:"leagueId"`
 	LeagueCanonical string         `json:"leagueCanonical"`
 	URL             string         `json:"url"`
 	Token           string         `json:"token"`

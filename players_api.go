@@ -346,18 +346,18 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 		//team := vars["team"]
 		player := vars["player"]
 
+		p := getPlayer(player)
+
 		last, first, middle := parseName(r.FormValue("name"))
 
 		position := r.FormValue("position")
 		number := r.FormValue("number")
 
-		/*height := r.FormValue("height")
-		weight := r.FormValue("weight")
-		hand := r.FormValue("hand")
-		position := r.FormValue("position")
-		jersey := r.FormValue("jersey")
-		birth := r.FormValue("birth")
-		*/
+		if playerNumberExists(league, p.TeamID, number) {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+
 		_, err := config.Database.Exec(
 			PlayerUpdate, first, middle, last, position, number, player,
 		)
