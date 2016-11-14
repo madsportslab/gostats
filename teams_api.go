@@ -275,12 +275,26 @@ func teamAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		name := r.FormValue("name")
 
-		_, err := config.Database.Exec(
-			TeamUpdate, name, league, team,
+		row := config.Database.QueryRow(
+			TeamExists, league, generateCanonical(name),
 		)
 
-		if err != nil {
+		t := Team{}
+
+		err := row.Scan(&t.ID, &t.Name, &t.Canonical)
+
+		if err != sql.ErrNoRows {
 			log.Println(err)
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+
+		_, err2 := config.Database.Exec(
+			TeamUpdate, name, generateCanonical(name), team,
+		)
+
+		if err2 != nil {
+			log.Println(err2)
 			w.WriteHeader(http.StatusConflict)
 		}
 

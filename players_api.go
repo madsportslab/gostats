@@ -162,14 +162,25 @@ func getPlayerByCanonical(league *League, team *Team, player string) *Player {
 
 } // getPlayerByCanonical
 
-func playerNumberExists(league string, team string, number string) bool {
+func playerNumberExists(league string, team string, player string,
+  number string) bool {
 
   players := getTeamPlayers(league, team)
 
 	for _, p := range players {
 
 		if p.PlayerNumber.String == number {
-			return true
+
+			if player == "" {
+				return true
+			} else {
+				
+				if player != p.ID {
+					return true
+				}
+
+			}
+
 		}
 
 	}
@@ -248,7 +259,7 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 		//birth     := r.FormValue("birth")
 		position := r.FormValue("position")
 
-		if playerNumberExists(league, team, playerNumber) {
+		if playerNumberExists(league, team, "", playerNumber) {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
@@ -348,12 +359,14 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		p := getPlayer(player)
 
-		last, first, middle := parseName(r.FormValue("name"))
+		name := r.FormValue("name")
+
+		last, first, middle := parseName(name)
 
 		position := r.FormValue("position")
 		number := r.FormValue("number")
 
-		if playerNumberExists(league, p.TeamID, number) {
+		if playerNumberExists(league, p.TeamID, p.ID, number) {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}

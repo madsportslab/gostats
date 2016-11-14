@@ -233,8 +233,6 @@ func getLeague(league string) *League {
 		return nil
 	}
 
-	l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
-
 	return &l
 
 } // getLeague
@@ -254,8 +252,6 @@ func getLeagueByCanonical(canonical string) *League {
 		log.Println(err)
 		return nil
 	}
-
-	l.URL = fmt.Sprintf("/leagues/%s", l.Canonical)
 
 	return &l
 
@@ -384,13 +380,28 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 		name := r.FormValue("name")
 
-		// authorization
-		_, err := config.Database.Exec(
-			LeagueUpdate, name, league,
+		row := config.Database.QueryRow(
+			LeagueGetByCanonical, generateCanonical(name),
 		)
 
-		if err != nil {
+		l := League{}
+
+		err := row.Scan(&l.ID, &l.Name, &l.Canonical, &l.Icon, &l.Visible,
+			&l.Official, &l.Metric, &l.City, &l.Country, &l.Location)
+
+		if err != sql.ErrNoRows {
 			log.Println(err)
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+
+		// authorization
+		_, err2 := config.Database.Exec(
+			LeagueUpdate, name, generateCanonical(name), league,
+		)
+
+		if err2 != nil {
+			log.Println(err2)
 			w.WriteHeader(http.StatusConflict)
 		}
 

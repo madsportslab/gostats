@@ -52,7 +52,7 @@ const (
 
 	LeagueUpdate = "UPDATE " +
 		"leagues " +
-		"SET name=? " +
+		"SET name=?, canonical=? " +
 		"WHERE id=?"
 
 	LeagueAdminCreate = "INSERT INTO league_admins(" +
@@ -112,6 +112,11 @@ const (
 		"FROM teams, leagues " +
 		"WHERE leagues.id=teams.league_id and teams.id=?"
 
+	TeamExists = "SELECT " +
+	  "id, name, canonical " +
+		"FROM teams " +
+		"WHERE league_id=? and canonical=?"
+
 	TeamGetByCanonical = "SELECT " +
 		"id, name, canonical, icon, league_id " +
 		"FROM teams " +
@@ -141,8 +146,8 @@ const (
 
 	TeamUpdate = "UPDATE " +
 		"teams " +
-		"SET name=? " +
-		"WHERE league_id=? and id=?"
+		"SET name=?, canonical=? " +
+		"WHERE id=?"
 
 	TeamPlayerGet = "SELECT " +
 		"id, first, middle, last, canonical, playerNumber, " +

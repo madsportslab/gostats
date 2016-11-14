@@ -175,6 +175,9 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 			}
 
+			log.Println("fuck")
+			log.Println(res)
+
 			pct := calcWinPCT(res)
 
 			res["PCT"] = pct
