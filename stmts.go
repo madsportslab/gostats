@@ -69,6 +69,10 @@ const (
 		"FROM league_admins, users " +
 		"WHERE league_id=? and league_admins.user_id=users.id"
 
+	LeagueAdminDelete = "DELETE " +
+	  "FROM league_admins " +
+		"WHERE user_id=? and league_id=?"
+
 	LeagueAdminCheck = "SELECT " +
 		"user_id, league_id " +
 		"FROM league_admins " +

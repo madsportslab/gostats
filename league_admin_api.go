@@ -111,6 +111,22 @@ func leagueAdminHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPut:
 	case http.MethodDelete:
     // remove administrator
+
+    admin := vars["admin"]
+
+    if admin == u.ID {
+      w.WriteHeader(http.StatusForbidden)
+      return
+    }
+    
+    _, err := config.Database.Exec(
+      LeagueAdminDelete, admin, league,
+    )
+
+    if err != nil {
+      w.WriteHeader(http.StatusConflict)
+    }
+
 	case http.MethodGet:
     // check if administrator
 
