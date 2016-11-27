@@ -103,12 +103,12 @@ const (
 
 	TeamScheduleGetAll = "SELECT " +
 		"games.id, games.home_id, games.away_id, games.league_id, games.season_id, " +
-		"games.completed, teams.Name " +
+		"games.completed, games.scheduled2, teams.Name " +
 		"FROM games, teams " +
 		"WHERE games.league_id=? and games.season_id=? and " +
 		"(teams.id=games.home_id or teams.id=games.away_id) and " +
 		"(games.home_id=? or games.away_id=?) and not teams.id=?" +
-		"ORDER BY games.id DESC"
+		"ORDER BY games.scheduled2 DESC"
 
 	TeamGet = "SELECT " +
 		"teams.id, teams.name, teams.canonical, teams.icon, teams.league_id, " +
@@ -292,21 +292,26 @@ const (
 		"WHERE id=?"
 
 	ScheduleGetAll = "SELECT " +
-		"id, scheduled, home_id, away_id, league_id, season_id, completed " +
+		"id, scheduled2, home_id, away_id, league_id, season_id, completed " +
 		"FROM games " +
-		"WHERE league_id=? and season_id=?"
+		"WHERE league_id=? and season_id=? " +
+		"ORDER BY scheduled2 ASC"
 
 	ScheduleCreate = "INSERT INTO games(" +
-		"home_id, away_id, season_id, league_id)" +
-		"VALUES($1, $2, $3, $4)"
+		"home_id, away_id, scheduled2, season_id, league_id)" +
+		"VALUES($1, $2, $3, $4, $5)"
 
 	ScheduleUpdate = "UPDATE games(" +
-		"scheduled, home, away) " +
+		"scheduled2, home, away) " +
 		"VALUES('true', $2, $3) " +
 		"WHERE id=?"
 
 	ScheduleFinal = "UPDATE games " +
 		"SET completed='true'" +
+		"WHERE league_id=? and id=?"
+
+	ScheduleDelete = "DELETE FROM " +
+	  "games " +
 		"WHERE league_id=? and id=?"
 
 	StandingsGet = "SELECT " +

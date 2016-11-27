@@ -6,6 +6,7 @@ import (
 
 const (
 	Madsportslab = "madsportslab"
+	ShortForm    = "2006-01-02 03:04:05 -0700"
 )
 
 // Database table structures
@@ -107,6 +108,7 @@ type Season struct {
 type Game struct {
 	ID              string         `json:"id"`
 	Scheduled       sql.NullString `json:"scheduled"`
+	Scheduled2      sql.NullString `json:"scheduled2"`
 	HomeID          string         `json:"homeId"`
 	AwayID          string         `json:"awayId"`
 	HomeName        string         `json:"homeName"`

@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -36,16 +35,13 @@ func getGames(league_id string, scheduled string) []Game {
 
 		g := Game{}
 
-		err := rows.Scan(&g.ID, &g.Scheduled, &g.HomeID, &g.AwayID,
+		err := rows.Scan(&g.ID, &g.Scheduled2, &g.HomeID, &g.AwayID,
 			&g.LeagueID, &g.SeasonID, &g.Completed)
 
 		if err == sql.ErrNoRows || err != nil {
 			log.Println("getGames: ", err)
 			return nil
 		}
-
-		//g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s",
-		//	g.LeagueID, g.SeasonID, g.ID)
 
 		g.AwayName = teams[g.AwayID].Name
 		g.HomeName = teams[g.HomeID].Name
@@ -88,16 +84,13 @@ func getGamesEx(user *User) map[string][]Game {
 
 			g := Game{}
 
-			err := rows.Scan(&g.ID, &g.Scheduled, &g.HomeID, &g.AwayID,
+			err := rows.Scan(&g.ID, &g.Scheduled2, &g.HomeID, &g.AwayID,
 				&g.LeagueID, &g.SeasonID, &g.Completed)
 
 			if err == sql.ErrNoRows || err != nil {
 				log.Println("getGamesEx: ", err)
 				return nil
 			}
-
-			//g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s",
-			//	g.LeagueID, g.SeasonID, g.ID)
 
 			g.AwayName = teams[g.AwayID].Name
 			g.HomeName = teams[g.HomeID].Name
@@ -135,30 +128,26 @@ func getGamesBySeason(leagueid string, seasonid string, teamid string) []Game {
 		g := Game{}
 
 		err := rows.Scan(&g.ID, &g.HomeID, &g.AwayID, &g.LeagueID, &g.SeasonID,
-			&g.Completed, &g.Opponent)
+			&g.Completed, &g.Scheduled2, &g.Opponent)
 
 		if err == sql.ErrNoRows || err != nil {
 			log.Println("getGamesBySeason: ", err)
 			return nil
 		}
 
-  req := Req{
-		LeagueId: g.LeagueID,
-		SeasonId: g.SeasonID,
-		GameId: g.ID,
-	}
+		log.Println(g.Scheduled)
 
-  score1 := getTeamScore(&req, g.HomeID)
-	score2 := getTeamScore(&req, g.AwayID)
+  	req := Req{
+			LeagueId: g.LeagueID,
+			SeasonId: g.SeasonID,
+			GameId: g.ID,
+		}
 
-	log.Println(score1)
-	log.Println(score2)
+  	score1 := getTeamScore(&req, g.HomeID)
+		score2 := getTeamScore(&req, g.AwayID)
 
-	g.HomeScore, _ = strconv.ParseInt(score1["T"], 0, 64) 
-	g.AwayScore, _ = strconv.ParseInt(score2["T"], 0, 64)
-
-		g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s&myteamid=%s",
-			g.LeagueID, g.SeasonID, g.ID, teamid)
+		g.HomeScore, _ = strconv.ParseInt(score1["T"], 0, 64) 
+		g.AwayScore, _ = strconv.ParseInt(score2["T"], 0, 64)
 
 		g.Token = getGameToken(g.ID)
 
@@ -195,14 +184,8 @@ func getGame(id string) *Game {
   score1 := getTeamScore(&req, g.HomeID)
 	score2 := getTeamScore(&req, g.AwayID)
 
-	log.Println(score1)
-	log.Println(score2)
-
 	g.HomeScore, _ = strconv.ParseInt(score1["T"], 0, 64) 
 	g.AwayScore, _ = strconv.ParseInt(score2["T"], 0, 64)
-
-	g.URL = fmt.Sprintf("/viewgame?leagueid=%s&seasonid=%s&gameid=%s",
-		g.LeagueID, g.SeasonID, g.ID)
 
 	g.Token = getGameToken(g.ID)
 
@@ -231,17 +214,26 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 
-		home := r.FormValue("home")
-		away := r.FormValue("away")
+		home	 		:= r.FormValue("home")
+		away 			:= r.FormValue("away")
+		scheduled := r.FormValue("scheduled")
+
+    if home == "" || away == "" {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
 
 		s := getLatestSeasonByID(league)
 
 		if s == nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
+		converted := extractDate(scheduled)
+
 		_, err := config.Database.Exec(
-			ScheduleCreate, home, away, s.ID, league,
+			ScheduleCreate, home, away, converted, s.ID, league,
 		)
 
 		if err != nil {
@@ -341,6 +333,21 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 		endGame(league, game)
 
 	case http.MethodDelete:
+
+		game := vars["game"]
+
+		_, err := config.Database.Exec(
+			ScheduleDelete, league, game,
+		)
+
+		if err != nil {
+
+			log.Println("delete scheduleAPIHandler: ", err)
+			w.WriteHeader(http.StatusNotFound)
+			return
+
+		}
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 

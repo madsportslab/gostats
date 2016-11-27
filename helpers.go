@@ -274,3 +274,21 @@ func createJSON(msg string) []byte {
 	}
 
 } // createJSON
+
+func extractDate(val string) string {
+
+	log.Println("wow")
+  log.Println(val)
+
+	//const format = "2006-01-02 03:04:05 -0700"
+  t, err := time.Parse(ShortForm, val)
+	
+	if err != nil {
+		return ""
+	}
+
+	f := fmt.Sprintf("%d-%d-%d", t.Year(), t.Month(), t.Day())
+
+  return f
+
+} // extractDate
