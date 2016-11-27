@@ -20,7 +20,9 @@ func specialAPIHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		games := getGamesEx(u)
+		date := r.FormValue("gameDate")
+
+		games := getGamesEx(u, date)
 
 		if len(games) == 0 {
 			w.WriteHeader(http.StatusNotFound)

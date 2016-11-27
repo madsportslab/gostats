@@ -294,7 +294,7 @@ const (
 	ScheduleGetAll = "SELECT " +
 		"id, scheduled2, home_id, away_id, league_id, season_id, completed " +
 		"FROM games " +
-		"WHERE league_id=? and season_id=? " +
+		"WHERE league_id=? and season_id=? and scheduled2=? " +
 		"ORDER BY scheduled2 ASC"
 
 	ScheduleCreate = "INSERT INTO games(" +

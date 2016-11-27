@@ -398,9 +398,9 @@ func getScore(req *Req) []byte {
 
 } // getScore
 
-func getScores(leagueid string) []byte {
+func getScores(leagueid string, gameDay string) []byte {
 
-	games := getGameScores(leagueid)
+	games := getGameScores(leagueid, gameDay)
 
 	sr := ScoreRes{
 		ResponseType: ALLSCORES,
@@ -417,9 +417,12 @@ func getScores(leagueid string) []byte {
 
 } // getScores
 
-func getGameScores(leagueid string) map[string]GameScore {
+func getGameScores(leagueid string, gameDay string) map[string]GameScore {
 
-	games := getGames(leagueid, "")
+	games := getGames(leagueid, gameDay)
+
+	log.Println(gameDay)
+	log.Println(games)
 
 	x := map[string]GameScore{}
 
@@ -457,17 +460,15 @@ func getGameScores(leagueid string) map[string]GameScore {
 
 } // getGameScores
 
-func getMyScores(user *User) []byte {
+func getMyScores(user *User, gameDay string) []byte {
 
 	leagues := getAllMyLeagues(user)
-
-	log.Println(leagues)
 
 	x := map[string]map[string]GameScore{}
 
 	for _, league := range leagues {
 
-		games := getGameScores(league.ID)
+		games := getGameScores(league.ID, gameDay)
 
 		x[league.Name] = games
 

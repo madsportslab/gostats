@@ -19,7 +19,7 @@ func getGames(league_id string, scheduled string) []Game {
 	teams := getTeamsAsMap(league)
 
 	rows, err := config.Database.Query(
-		ScheduleGetAll, league_id, season.ID,
+		ScheduleGetAll, league_id, season.ID, scheduled,
 	)
 
 	if err != nil {
@@ -51,11 +51,12 @@ func getGames(league_id string, scheduled string) []Game {
 
 	}
 
+	log.Println(games)
 	return games
 
 } // getGames
 
-func getGamesEx(user *User) map[string][]Game {
+func getGamesEx(user *User, date string) map[string][]Game {
 
 	ret := map[string][]Game{}
 
@@ -68,7 +69,7 @@ func getGamesEx(user *User) map[string][]Game {
 		teams := getTeamsAsMap(&league)
 
 		rows, err := config.Database.Query(
-			ScheduleGetAll, league.ID, season.ID,
+			ScheduleGetAll, league.ID, season.ID, date,
 		)
 
 		if err != nil {
@@ -278,8 +279,6 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 				games := getGamesBySeason(league, s.ID, t.ID)
 
-				log.Println(games)
-
 				if len(games) == 0 {
 					w.WriteHeader(http.StatusNotFound)
 				} else {
@@ -296,9 +295,11 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				log.Println(u.ID)
+				date := r.FormValue("gameDate")
 
-				games := getGamesEx(u)
+				log.Println(date)
+
+				games := getGamesEx(u, date)
 
 				if len(games) == 0 {
 					w.WriteHeader(http.StatusNotFound)

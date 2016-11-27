@@ -107,6 +107,7 @@ type Req struct {
 	GameKey   string   `json:"gamekey"`
 	UserToken string   `json:"userToken"`
 	Games     []string `json:"games"`
+	GameDay   string   `json:"gameDay"`
 }
 
 type Broadcast struct {
@@ -261,7 +262,7 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 
 		case ALLSCORES:
 
-			j := getScores(id)
+			j := getScores(id, req.GameDay)
 
 			gs := GenericSignal{
 				GameKey: id,
@@ -274,7 +275,7 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 
 			u := tokenToUser(req.UserToken)
 
-			j := getMyScores(u)
+			j := getMyScores(u, req.GameDay)
 
 			gs := GenericSignal{
 				GameKey: id,
