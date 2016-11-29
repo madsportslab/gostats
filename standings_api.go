@@ -168,11 +168,26 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 		for _, t := range teams {
 
 			key := fmt.Sprintf("record.%s.%s.%s", l.ID, s.ID, t.ID)
+			log.Println(t)
+			log.Println(key)
 
 			res, err := redis.StringMap(config.Redis.Do("HGETALL", key))
-
+			
 			if err != nil {
 				log.Println(err)
+			}
+
+			if len(res) == 0 {
+				res["W"] = "0"
+				res["L"] = "0"
+				res["HOMEW"] = "0"
+				res["HOMEL"] = "0"
+				res["AWAYW"] = "0"
+				res["AWAYL"] = "0"
+				res["L10W"] = "0"
+				res["L10L"] = "0"
+				res["STREAKW"] = "0"
+				res["STREAKL"] = "0"
 			}
 
 			pct := calcWinPCT(res)
@@ -180,7 +195,8 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 			res["PCT"] = pct
 			res["NAME"] = t.Name
 			res["ID"] = t.ID
-
+			
+			log.Println(res)
 			standings = append(standings, res)
 
 		}
