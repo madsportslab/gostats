@@ -6,7 +6,7 @@ import (
 
 const (
 	Madsportslab = "madsportslab"
-	ShortForm    = "2006-01-02 03:04:05 -0700"
+	ShortForm    = "2006-01-02 15:04:05 -0700"
 )
 
 // Database table structures

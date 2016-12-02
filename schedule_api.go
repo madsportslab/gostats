@@ -51,7 +51,6 @@ func getGames(league_id string, scheduled string) []Game {
 
 	}
 
-	log.Println(games)
 	return games
 
 } // getGames

@@ -420,10 +420,7 @@ func getScores(leagueid string, gameDay string) []byte {
 func getGameScores(leagueid string, gameDay string) map[string]GameScore {
 
 	games := getGames(leagueid, gameDay)
-
-	log.Println(gameDay)
-	log.Println(games)
-
+	
 	x := map[string]GameScore{}
 
 	for _, g := range games {

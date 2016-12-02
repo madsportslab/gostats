@@ -168,8 +168,6 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 		for _, t := range teams {
 
 			key := fmt.Sprintf("record.%s.%s.%s", l.ID, s.ID, t.ID)
-			log.Println(t)
-			log.Println(key)
 
 			res, err := redis.StringMap(config.Redis.Do("HGETALL", key))
 			
@@ -196,7 +194,6 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 			res["NAME"] = t.Name
 			res["ID"] = t.ID
 			
-			log.Println(res)
 			standings = append(standings, res)
 
 		}

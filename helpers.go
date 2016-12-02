@@ -284,11 +284,25 @@ func extractDate(val string) string {
   t, err := time.Parse(ShortForm, val)
 	
 	if err != nil {
+		log.Println(err)
 		return ""
 	}
 
-	f := fmt.Sprintf("%d-%d-%d", t.Year(), t.Month(), t.Day())
+  d := int(t.Day())
+	m := int(t.Month())
 
-  return f
+	f := fmt.Sprintf("%d-%s-%s", t.Year(), lpad(m), lpad(d))
+  
+	return f
 
 } // extractDate
+
+func lpad(val int) string {
+
+  if val < 10 {
+		return fmt.Sprintf("0%d", val)
+	} else {
+		return fmt.Sprintf("%d", val)
+	}
+
+} // lpad
