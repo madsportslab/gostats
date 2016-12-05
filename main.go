@@ -164,6 +164,10 @@ func initRoutes() *mux.Router {
 	router.HandleFunc("/api/sports", sportAPIHandler)
 	router.HandleFunc("/api/sports/{sport:[0-9]+}/positions", positionAPIHandler)
 
+	router.HandleFunc("/api/leagues/{id:[0-9]+}/icons", iconAPIHandler)
+	router.HandleFunc("/api/teams/{id:[0-9]+}/icons", iconAPIHandler)
+	router.HandleFunc("/api/players/{id:[0-9]+}/icons", iconAPIHandler)
+
 	// websocket routes
 	router.HandleFunc("/ws/game/{id:[0-9a-f]+}", gameHandler)
 	router.HandleFunc("/ws/game/me", gameHandler)

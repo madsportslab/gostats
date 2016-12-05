@@ -115,7 +115,7 @@ func authenticate(r *http.Request) *User {
 	if err != nil {
 
 		token = r.FormValue("token")
-
+		
 		if token == "" {
 			return nil
 		}

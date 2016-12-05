@@ -78,6 +78,11 @@ const (
 		"FROM league_admins " +
 		"WHERE league_id=? and user_id=?"
 
+	LeagueIconUpdate = "UPDATE " +
+	  "leagues " +
+		"SET icon=? " +
+		"WHERE id=?"
+
 	SeasonGet = "SELECT " +
 		"id, periods, duration, league_id " +
 		"FROM seasons " +
@@ -153,6 +158,11 @@ const (
 		"SET name=?, canonical=? " +
 		"WHERE id=?"
 
+	TeamIconUpdate = "UPDATE " +
+	  "teams " +
+		"SET icon=? " +
+		"WHERE id=?"
+
 	TeamPlayerGet = "SELECT " +
 		"id, first, middle, last, canonical, playerNumber, " +
 		"position_id, team_id, league_id " +
@@ -191,6 +201,11 @@ const (
 		"user_id, team_id " +
 		"FROM team_admins " +
 		"WHERE team_id=? and user_id=?"
+
+	PlayerIconUpdate = "UPDATE " +
+	  "players " +
+		"SET icon=? " +
+		"WHERE id=?"
 
 	PlayerGet = "SELECT " +
 		"id, first, middle, last, canonical, playerNumber, " +
