@@ -4,7 +4,7 @@ import (
   "bufio"
   "log"
   "net/http"
-  //"strings"
+  "strings"
 
   "github.com/aws/aws-sdk-go/aws"
   "github.com/aws/aws-sdk-go/aws/session"
@@ -25,6 +25,7 @@ func s3Upload(buffer *bufio.Reader, filename string, content string) {
     Body: buffer,
     Bucket: aws.String("madsportslab-dev1"),
     Key: aws.String(filename),
+    ACL: aws.String("public-read"),
   })
 
   if err != nil {
@@ -40,25 +41,18 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
   u := authenticate(r)
 
   log.Println(u)
-  
+
 	vars := mux.Vars(r)
 
 	switch r.Method {
 	case http.MethodPost:
 
-    var statement = ""
-
     id := vars["id"]
-    log.Println(id)
 
     // seems order of multipart items is important
 
     file, header, err := r.FormFile("file")
-    log.Println(file)
-    log.Println(header.Filename)
-    log.Println(header.Header)
-    log.Println(header.Header.Get("Content-Type"))
-
+    
     defer file.Close()
 
     buffer := bufio.NewReader(file)
@@ -69,41 +63,38 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     s3Upload(buffer, header.Filename, header.Header.Get("Content-Type"))
-    //log.Println(file, header)
-
+    
     if err != nil {
       log.Println(err)
       w.WriteHeader(409)
+      return
     }
 
-    log.Println(statement)
+    var q = ""
     
-    /*
     if strings.Contains(r.URL.String(), "leagues") {
-      statement = LeagueIconUpdate
+      q = LeagueIconUpdate
     } else if strings.Contains(r.URL.String(), "teams") {
-      statement = TeamIconUpdate
+      q = TeamIconUpdate
     } else if strings.Contains(r.URL.String(), "players") {
-      statement = PlayerIconUpdate
+      q = PlayerIconUpdate
     } else {
       w.WriteHeader(http.StatusConflict)
       return
     }
     
     // check privilege
-
-    _, err := config.Database.Exec(
-      statement, icon, id,
+    
+    _, err2 := config.Database.Exec(
+      q, header.Filename, id,
     )
 
-    if err != nil {
+    if err2 != nil {
 
-      log.Println(err)
+      log.Println(err2)
       w.WriteHeader(http.StatusConflict)
 
     }
-    */
-
 
   case http.MethodGet:
   case http.MethodPut:
