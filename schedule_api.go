@@ -278,13 +278,9 @@ func scheduleAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 				games := getGamesBySeason(league, s.ID, t.ID)
 
-				if len(games) == 0 {
-					w.WriteHeader(http.StatusNotFound)
-				} else {
-					j, _ := json.Marshal(games)
-					w.Write(j)
-				}
-
+				j, _ := json.Marshal(games)
+				w.Write(j)
+				
 			} else {
 
 				u := authenticate(r)

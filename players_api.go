@@ -324,12 +324,8 @@ func playerAPIHandler(w http.ResponseWriter, r *http.Request) {
 
 				players := getTeamPlayers(l.ID, t.ID)
 
-				if len(players) == 0 {
-					w.WriteHeader(http.StatusNotFound)
-				} else {
-					j, _ := json.Marshal(players)
-					w.Write(j)
-				}
+				j, _ := json.Marshal(players)
+				w.Write(j)
 
 			} else {
 

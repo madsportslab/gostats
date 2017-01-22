@@ -175,6 +175,10 @@ func standingsAPIHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 			}
 
+			if res == nil {
+				res = map[string]string{}
+			}
+
 			if len(res) == 0 {
 				res["W"] = "0"
 				res["L"] = "0"
