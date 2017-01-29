@@ -2,3 +2,4 @@ gostats
 db/meta.db
 db/test.db
 *.swp
+envs.sh

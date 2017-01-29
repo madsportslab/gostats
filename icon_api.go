@@ -2,16 +2,14 @@ package main
 
 import (
   "bytes"
-  //"bufio"
-  "io"
   "log"
   "net/http"
-  //"strings"
+  "strings"
 
   "github.com/aws/aws-sdk-go/aws"
   "github.com/aws/aws-sdk-go/aws/session"
   "github.com/aws/aws-sdk-go/service/s3/s3manager"
-  //"github.com/gorilla/mux"
+  "github.com/gorilla/mux"
 )
 
 func updateLeagueIcon() {
@@ -46,39 +44,14 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
 
   //u := authenticate(r)
 
-  //vars := mux.Vars(r)
+  vars := mux.Vars(r)
 
 	switch r.Method {
 	case http.MethodPost:
 
-    //id := vars["id"]
+    id := vars["id"]
     
     // seems order of multipart items is important
-    
-    /*
-    err := r.ParseMultipartForm(5 << 20)
-    
-    if err != nil {
-      log.Println(err)
-      w.WriteHeader(http.StatusInternalServerError)
-      return
-    }*/
-    /*
-    token := r.FormValue("token")
-
-    log.Println(token)
-
-    file, header, err2 := r.FormFile("file")
-
-    if err2 != nil {
-      log.Println(err2)
-      w.WriteHeader(http.StatusConflict)
-      return
-    }
-
-    log.Println(file)
-    log.Println(header)
-    */
 
     form, err := r.MultipartReader()
 
@@ -87,67 +60,28 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
       return
     }
 
-    for {
+    p1, err := form.NextPart()
 
-      part, err := form.NextPart()
+    b1 := new(bytes.Buffer)
+    b1.ReadFrom(p1)
 
-      if err == io.EOF {
-        break
-      }
+    token := b1.String()
 
-      log.Println(part.FormName())
+    log.Println(token)
 
-      buf := new(bytes.Buffer)
-      buf.ReadFrom(part)
-        
-      if part.FormName() == "iconfile" {
-        s3Upload(buf, "test")
-      } else if part.FormName() == "token" {
+    p2, err := form.NextPart()
 
-        log.Println(buf.String())
+    b2 := new(bytes.Buffer)
+    b2.ReadFrom(p2)
 
-      }
+    filename := b2.String()
 
-    }
+    p3, err := form.NextPart()
 
-    
-/*
-    for _, fhd := range r.MultipartForm.File {
+    b3 := new(bytes.Buffer)
+    b3.ReadFrom(p3)
 
-      for _, hdr := range fhd {
-
-        log.Println("shit")
-        log.Println(hdr)
-        //buffer := bufio.NewReader(hdr)
-
-      }
-    }
-*/
-
-/*
-    if err != nil {
-      log.Println("FormFile error: ", err)
-      w.WriteHeader(http.StatusInternalServerError)
-      return
-    }
-
-    defer file.Close()
-
-    buffer := bufio.NewReader(file)
-
-    if err != nil {
-      log.Println(err)
-      w.WriteHeader(http.StatusConflict)
-    }
-*/
-/*
-    s3Upload(buffer, header.Filename, header.Header.Get("Content-Type"))
-    
-    if err != nil {
-      log.Println(err)
-      w.WriteHeader(http.StatusConflict)
-      return
-    }
+    s3Upload(b3, filename)
 
     var q = ""
     
@@ -165,7 +99,7 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
     // check privilege
     
     _, err2 := config.Database.Exec(
-      q, header.Filename, id,
+      q, filename, id,
     )
 
     if err2 != nil {
@@ -174,7 +108,7 @@ func iconAPIHandler(w http.ResponseWriter, r *http.Request) {
       w.WriteHeader(http.StatusConflict)
 
     }
-*/
+
   case http.MethodGet:
   case http.MethodPut:
   case http.MethodDelete:
