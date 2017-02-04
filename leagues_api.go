@@ -361,6 +361,22 @@ func leagueAPIHandler(w http.ResponseWriter, r *http.Request) {
 					w.Write(j)
 				}
 
+			} else if league == "default" {
+				
+				l := getDefaultLeague(u)
+
+				if l == nil {
+
+					w.WriteHeader(http.StatusNotFound)
+					return
+
+				} else {
+
+					j, _ := json.Marshal(l)
+					w.Write(j)
+
+				}
+
 			} else {
 
 				l := getLeague(league)

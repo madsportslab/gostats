@@ -21,7 +21,7 @@ type User struct {
 	Icon          sql.NullString `json:"icon"`
 	Token         sql.NullString `json:"token"`
 	Meta          sql.NullString `json:"meta"`
-	DefaultLeague int            `json:"defaultLeague"`
+	DefaultLeague int         	 `json:"defaultLeague"`
 	City          sql.NullString `json:"city"`
 	Country       sql.NullString `json:"country"`
 	Location      sql.NullString `json:"location"`

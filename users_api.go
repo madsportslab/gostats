@@ -1,11 +1,11 @@
 package main
 
 import (
-  "encoding/json"
+  //"encoding/json"
   "log"
   "net/http"
   
-  "github.com/gorilla/mux"
+  //"github.com/gorilla/mux"
 )
 
 func updatePassword(u *User, hash string) bool {
@@ -105,30 +105,6 @@ func userAPIHandler(w http.ResponseWriter, r *http.Request) {
       }
       
     }
-    
-  case http.MethodGet:
-  
-    // TODO: auth
-    vars := mux.Vars(r)
-    
-    user := vars["user"]
-    
-    row := config.Database.QueryRow(
-      UserGet, user,
-    )
-  
-    u := User{}
-    
-    err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Icon, &u.Salt)
-    
-    if err != nil {
-      log.Println(err)
-    }
-    
-    j, _ := json.Marshal(u)
-    
-    w.Write(j)
-    
   case http.MethodPut:  
   
     u := authenticate(r)
@@ -149,6 +125,7 @@ func userAPIHandler(w http.ResponseWriter, r *http.Request) {
       w.WriteHeader(http.StatusInternalServerError)
     }
     
+  case http.MethodGet:
   case http.MethodDelete:
   default:
     w.WriteHeader(http.StatusMethodNotAllowed)

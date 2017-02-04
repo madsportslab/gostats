@@ -80,7 +80,11 @@ func initRoutes() *mux.Router {
 
 	// leagues
 	router.HandleFunc("/api/leagues", leagueAPIHandler)
+
 	router.HandleFunc("/api/leagues/{league:all}", leagueAPIHandler)
+	router.HandleFunc("/api/leagues/{league:default}", leagueAPIHandler)
+	router.HandleFunc("/api/leagues/{league:following}", leagueAPIHandler)
+
 	router.HandleFunc("/api/leagues/{league:[0-9]+}", leagueAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/players",
 		playerAPIHandler)
@@ -96,7 +100,6 @@ func initRoutes() *mux.Router {
 	  followerAPIHandler)
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/followers/{follower:[0-9]+}",
 	  followerAPIHandler)
-	router.HandleFunc("/api/leagues/{league:following}", leagueAPIHandler)
 
 	router.HandleFunc("/api/leagues/{league:[0-9]+}/admins",
 		leagueAdminHandler)
